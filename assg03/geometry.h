@@ -46,3 +46,35 @@ public:
 
   const Point *get(const int position) const;
 };
+
+class Polygon {
+protected:
+  PointArray ptArr;
+  static int numPol;
+
+public:
+  Polygon(Point points[], const int len);
+  Polygon(PointArray &p);
+  ~Polygon();
+
+  virtual double area() = 0;
+  static int getNumPolygons() { return numPol; }
+  int getNumSides() const;
+
+  const PointArray *getPoints();
+};
+
+class Rectangle : public Polygon {
+public:
+  Rectangle(const Point &lowerLeft, const Point &upperRight);
+  Rectangle(const int &a, const int &b, const int &c, const int &d);
+
+  virtual double area() const;
+};
+
+class Triangle : public Polygon {
+public:
+  Triangle(const Point &p1, const Point &p2, const Point &p3);
+
+  virtual double area() const;
+};

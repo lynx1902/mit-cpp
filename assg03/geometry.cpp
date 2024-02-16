@@ -1,4 +1,5 @@
 #include "geometry.h"
+#include <cmath>
 
 void Point::SetX(const int new_x) { x = new_x; }
 
@@ -75,6 +76,77 @@ const Point *PointArray::get(const int position) const {
   } else {
     return NULL;
   }
+}
+
+Polygon::Polygon(Point points[], const int len)
+    : ptArr(PointArray(points, len)) {
+  ++numPol;
+}
+
+Polygon::Polygon(PointArray &p) : ptArr(PointArray(p)) {
+  // ptArr = PointArray(p);
+  ++numPol;
+}
+
+int Polygon::getNumSides() const { return ptArr.getSize(); }
+
+const PointArray *Polygon::getPoints() { return &ptArr; }
+
+Polygon::~Polygon() { --numPol; }
+
+Point constructorPoints[4];
+
+Point *updateConstructorPoints(const Point &p1, const Point &p2,
+                               const Point &p3, const Point &p4 = Point(0, 0)) {
+  constructorPoints[0] = p1;
+  constructorPoints[1] = p2;
+  constructorPoints[2] = p3;
+  constructorPoints[3] = p4;
+  return constructorPoints;
+}
+
+Rectangle::Rectangle(const Point &lowerLeft, const Point &upperRight)
+    : Polygon(updateConstructorPoints(
+                  lowerLeft, Point(lowerLeft.getX(), upperRight.getY()),
+                  upperRight, Point(upperRight.getX(), lowerLeft.getY())),
+              4) {}
+
+Rectangle::Rectangle(const int &llx, const int &lly, const int &urx,
+                     const int &ury)
+    : Polygon(updateConstructorPoints(Point(llx, lly), Point(llx, ury),
+                                      Point(urx, ury), Point(urx, lly)),
+              4) {}
+
+double Rectangle::area() const {
+  double length = ptArr.get(3)->getX() - ptArr.get(0)->getX();
+
+  double breadth = ptArr.get(1)->getY() - ptArr.get(0)->getY();
+
+  return std::abs(length * breadth);
+}
+
+Triangle::Triangle(const Point &p1, const Point &p2, const Point &p3)
+    : Polygon(updateConstructorPoints(p1, p2, p3), 3) {}
+
+double Triangle::area() const {
+  double d1x = ptArr.get(0)->getX() - ptArr.get(1)->getX();
+  double d1y = ptArr.get(0)->getY() - ptArr.get(1)->getY();
+  double d2x = ptArr.get(1)->getX() - ptArr.get(2)->getX();
+  double d2y = ptArr.get(1)->getY() - ptArr.get(2)->getY();
+  double d3x = ptArr.get(0)->getX() - ptArr.get(2)->getX();
+  double d3y = ptArr.get(0)->getY() - ptArr.get(2)->getY();
+
+  double a = std::sqrt(std::pow(d1x, 2) + std::pow(d1y, 2));
+  double b = std::sqrt(std::pow(d2x, 2) + std::pow(d2y, 2));
+  double c = std::sqrt(std::pow(d3x, 2) + std::pow(d3y, 2));
+
+  double s = (a + b + c) / 2.0;
+
+  double sa = s - a;
+  double sb = s - b;
+  double sc = s - c;
+
+  return std::sqrt(s * sa * sb * sc);
 }
 
 int main() { return 0; }
