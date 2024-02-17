@@ -24,7 +24,7 @@ private:
 public:
   PointArray() {
     arrSize = 0;
-    pStart = new Point[arrSize];
+    pStart = new Point[0];
   }
   PointArray(const Point points[], const int size);
 
@@ -55,19 +55,19 @@ protected:
 public:
   Polygon(Point points[], const int len);
   Polygon(PointArray &p);
-  ~Polygon();
 
-  virtual double area() = 0;
+  virtual double area() const = 0;
   static int getNumPolygons() { return numPol; }
   int getNumSides() const;
 
-  const PointArray *getPoints();
+  const PointArray *getPoints() const;
+  ~Polygon();
 };
 
 class Rectangle : public Polygon {
 public:
   Rectangle(const Point &lowerLeft, const Point &upperRight);
-  Rectangle(const int &a, const int &b, const int &c, const int &d);
+  Rectangle(const int a, const int b, const int c, const int d);
 
   virtual double area() const;
 };
